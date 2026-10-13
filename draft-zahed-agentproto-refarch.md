@@ -140,6 +140,10 @@ Dialog Identifier:
 Intermediary:
 : An entity that relays or processes messages between dialog participants.
 
+Lifecycle Event:
+: A change to the state of a dialog, such as its establishment,
+  modification, or termination.
+
 Message:
 : A discrete unit of communication exchanged between dialog participants.
 
@@ -296,7 +300,7 @@ by the Security layer.
 |  - Multiplexed Streams                                        |
 |  - Per-stream Semantics                                       |
 |  - Connection continuity (Connection ID, TLS resumption)      |
-|  - Protocol : QUIC, MoQT                                      |
+|  - Protocols: HTTP, QUIC, WebTransport, WebRTC, MoQT          |
 +---------------------------------------------------------------+
                                  |
                                  v
