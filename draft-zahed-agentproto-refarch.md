@@ -356,10 +356,14 @@ described in {{security}} and {{existingworks}}.
 
 ## Dialog propatation {#dialog}
 
+The Dialog propagation is the controlled transfer and transformation of dialog
+context across agents that exists potentially in different trust domains, and time.
 Dialog Propagation maintains the dialog context and carries it between
 dialog participants, including across intermediaries. It is the sub-block
 that allows a dialog context to remain recognizable over multiple hops, over time,
 and across transport connections.
+
+A propagated dialog context returns result(s) that the principal can verify when required.
 
 ### Dialog Identifier and Correlation {#dialog-id}
 
