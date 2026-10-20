@@ -107,6 +107,10 @@ well-defined extension points, not to replace them.
 
 # Terminology {#terminology}
 
+Administrative Domain:
+: A set of entities, such as agents, tools, and intermediaries, that are
+subject to a common authorization policy and a common authority.
+
 Agent Identity:
 : Identity information associated with an AI agent, distinct from the
   identity of the user on whose behalf it acts, and used for
@@ -115,9 +119,6 @@ Agent Identity:
 AI Agent:
 : A software system that uses AI models to complete a task on behalf of a
   user or another AI agent.
-
-Capability:
-: A task that an AI agent can perform.
 
 Delegation:
 : The act of an AI agent requesting another AI agent to execute a task on
@@ -133,9 +134,13 @@ Dialog Context:
   dialog. It does not include the content exchanged with AI models, such as
   conversation memory, retrieved documents, or prompts.
 
-Dialog Identifier:
+Dialog Context Identifier:
 : An identifier, carried in the dialog context, that correlates messages
   with a dialog and survives network interruption or change.
+
+Context State:
+: The dialog context identifier, the dialog context, and the lifecycle state of a
+dialog context. It is distinct from task state.
 
 Intermediary:
 : An entity that relays or processes messages between dialog participants.
@@ -154,6 +159,10 @@ Modality:
 Orchestrator Agent:
 : An AI agent that decomposes a task into sub-tasks and delegates them to
   other AI agents.
+
+Principal:
+: The user or organization whose authority is originally exercised when an
+AI agent acts on its behalf.
 
 Task:
 : A unit of work submitted by a user to an AI agent, or delegated by one
