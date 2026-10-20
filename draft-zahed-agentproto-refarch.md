@@ -409,9 +409,29 @@ the Agent Communication Protocol needs to associate with a dialog so that
 existing authorization mechanisms can be applied at the points where they
 matter.
 
+### Delegation {#delegation}
+
+Delegation is a relationship between participants, not a property of a
+transport connection. The architecture distinguishes three roles:
+
+- the principal, such as a user or an organization, whose authority is
+  originally exercised;
+- the delegating agent, which requests another agent to execute a task;
+- the delegated agent, which executes the task.
+
+In multi-hop delegation, an agent can be the delegated agent for one hop and
+the delegating agent for the next or even become the principal. The delegation context associates these
+roles with the dialog so that each participant can determine who it is acting
+for and who is acting for it. A delegation relationship can be revoked or
+terminated independently of the dialog in which it was used.
+
+The constraints in {{intent-execution}} and {{delegation-chain}} apply: the
+authority passed at each hop is limited to the delegated task and is not
+broadened along the chain.
+
 ## Identity Management
 
-  Identity Management establishes who the participants of a dialog are. It
+Identity Management establishes who the participants of a dialog are. It
 builds on the agent identity requirements in {{agent-identity}} and on the
 Agent Identity Management System model in {{I-D.ietf-wimse-aims}}. The Agent
 Communication Protocol does not define identity credentials or authentication
