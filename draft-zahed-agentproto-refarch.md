@@ -1,7 +1,7 @@
 ---
 title: "Reference Architecture for Agent Communication"
 abbrev: "Agent Comm Ref Architecture"
-docname: draft-zahed-agentproto-refarch-latest
+docname: draft-zahed-agentproto-refarch-00
 category: info
 ipr: trust200902
 # area: xxxxx
@@ -35,10 +35,10 @@ author:
     email: suresh.krishnan@gmail.com
 
 normative:
-  RFC8446:
   RFC8693:
   RFC9000:
   RFC9001:
+  RFC9846:
 
 informative:
   RFC9261:
