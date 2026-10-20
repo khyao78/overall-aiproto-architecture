@@ -347,7 +347,7 @@ specifications in the DAWN WG.
 The Agent Communication Protocol provides the mechanisms that keep an
 interaction between users, agents, and tools coherent across network
 interruptions, intermediaries, and trust boundaries. It is composed of three
-sub-blocks, shown in {{fig-acp}}: Dialog Propagation, Authorization and
+sub-blocks, shown in {{fig-arch}}: Dialog Propagation, Authorization and
 Delegation, and Identity Management.
 
 The Agent Communication Protocol defines how dialog context, authorization
@@ -459,8 +459,7 @@ The architecture keeps the following identities distinct:
   dialog.
 
 Keeping these identities distinct is required so that a participant can
-distinguish the principal, the delegating agent, and the delegated agent, as
-described in {{delegation-context}}, and so that accountability can be
+distinguish the principal, the delegating agent, and the delegated agent, and so that accountability can be
 assigned to the right entity.
 
 # Security Aspects {#security}
