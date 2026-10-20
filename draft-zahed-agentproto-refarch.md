@@ -180,7 +180,7 @@ each described in a separate section:
 
 - Identity, authentication, authorization, and encryption ({{security}})
 - Transport ({{transport}})
-- Dialog continuity ({{sessioncont}})
+- Dialog Propagation ({{dialog}})
 
 The following are outside the scope of this document:
 
@@ -257,7 +257,7 @@ complete interaction in this use case proceeds as follows:
 6. Task Execution: The AI agents exchange messages within the dialog. The
    messages can carry multiple modalities.
 
-7. Dialog Continuity: If a transport connection is interrupted, the dialog
+7. Dialog Propagation: If a transport connection is interrupted, the dialog
    continues over a new transport connection.
 
 8. Task Completion: The Orchestrator Agent returns the result to the user
@@ -266,7 +266,7 @@ complete interaction in this use case proceeds as follows:
 ## Architecture Overview {#framework}
 
 {{fig-arch}} shows the architecture. The Agent Communication
-Protocol uses the Dialog, Authorization and Delegation, and Identity
+Protocol uses the Dialog Propagation, Authorization and Delegation, and Identity
 Management components. It runs over the Transport layer, which is protected
 by the Security layer.
 
@@ -335,17 +335,104 @@ specifications in the DAWN WG.
 
 # Agent Communication Protocol
 
-## Dialog propatation
+The Agent Communication Protocol provides the mechanisms that keep an
+interaction between users, agents, and tools coherent across network
+interruptions, intermediaries, and trust boundaries. It is composed of three
+sub-blocks, shown in {{fig-acp}}: Dialog Propagation, Authorization and
+Delegation, and Identity Management.
 
-   TDB
+The Agent Communication Protocol defines how dialog context, authorization
+context, and identity information are carried and associated with a dialog.
+It does not define the semantics of identity, authorization, or application
+tasks. Those semantics are provided by the existing building blocks
+described in {{security}} and {{existingworks}}.
+
+## Dialog propatation {#dialog}
+
+Dialog Propagation maintains the dialog context and carries it between
+dialog participants, including across intermediaries. It is the sub-block
+that allows a dialog context to remain recognizable over multiple hops, over time,
+and across transport connections.
+
+### Dialog Identifier and Correlation {#dialog-id}
+
+Every dialog context is required to have a context identifier, as described in
+{{dialogcont}}. The dialog identifier is required to:
+
+- correlate all messages that belong to the dialog, in every direction and at
+  every hop;
+- survive the loss or replacement of a transport connection, so that the
+  dialog is not tied to a TCP connection, QUIC connection, or TLS
+  association;
+- be usable by an intermediary to correlate the requests it receives with the
+  requests it forwards, without access to task context.
+
+A dialog can involve more than two participants, such as delegated agents,
+intermediaries, or members of a group. The dialog context identifier is therefore not
+required to imply a client-server relationship between participants.
+
+### Context Lifecycle {#context-lifecycle}
+
+The dialog context has an explicit lifecycle that is independent of transport
+connection state. {{fig-lifecycle}} shows the lifecycle events.
+
+~~~
+    CREATE
+      |
+      v
+   ACTIVE <------- MODIFY
+      |
+      v
+  SUSPENDED --- RESUME --> (authorization check) --> ACTIVE
+      |
+      v
+    RETIRE
+~~~
+{: #fig-lifecycle title="Dialog context lifecycle events"}
+
+### Context Propagation Across Intermediaries {#dialog-propagation-intermediaries}
+
+  TBD
+
+### Dialog Continuity {#dialogcont}
+
+Agent interactions are often long-lived, interruption-prone, and delegated across multiple hops. Each dialog is required to have a dialog identifier that survives network interruption or change. If a transport connection is interrupted, an authorized agent uses the dialog identifier to re-associate with the existing dialog instead of restarting the task. An intermediary uses the dialog identifier to correlate the requests it receives with the requests it forwards. Neither function requires access to task context.
+
+Dialog continuity is defined above any trasport protocol connection (TCP connection, QUIC connection) or TLS association. QUIC Connection ID and TLS resumption provide connection-level continuity; they preserve transport and cryptographic state, not dialog context.
    
 ## Authorization and Delegation
 
-   TDB
+Authorization and Delegation determines whether a participant is permitted to
+act within a dialog and on whose behalf. This sub-block does not define an
+authorization mechanism. It identifies the functions and the information that
+the Agent Communication Protocol needs to associate with a dialog so that
+existing authorization mechanisms can be applied at the points where they
+matter.
 
 ## Identity Management
 
-  TBD
+  Identity Management establishes who the participants of a dialog are. It
+builds on the agent identity requirements in {{agent-identity}} and on the
+Agent Identity Management System model in {{I-D.ietf-wimse-aims}}. The Agent
+Communication Protocol does not define identity credentials or authentication
+protocols. It defines how participant identities are associated with the
+dialog and how that association is preserved.
+
+### Identity Roles {#identity-roles}
+
+The architecture keeps the following identities distinct:
+
+- the principal identity, which is the identity of the user or organization on
+  whose behalf an agent acts;
+- the agent identity, which is the identity of the agent itself and is
+  distinct from that of the principal;
+- the identity of an intermediary that relays or processes messages in the
+  dialog.
+
+Keeping these identities distinct is required so that a participant can
+distinguish the principal, the delegating agent, and the delegated agent, as
+described in {{delegation-context}}, and so that accountability can be
+assigned to the right entity.
 
 # Security Aspects {#security}
 
@@ -424,11 +511,6 @@ Agent execution may be interrupted by user action, policy enforcement, higher-pr
 
 Some agent interactions may use one-to-many or many-to-many communication among a group of agents whose membership may change during an exchange. The transport is required to support these delivery patterns and to handle agents joining or leaving the group while the exchange is active. An agent's authorization to participate is required to be verified when it joins, and the keying material is required to be updated whenever an agent joins or leaves, so that an agent can decrypt group traffic only while it is a member. MLS {{RFC9420}} provides group key establishment with these properties.
 
-# Dialog Continuity {#sessioncont}
-
-Agent interactions are often long-lived, interruption-prone, and delegated across multiple hops. Each dialog is required to have a dialog identifier that survives network interruption or change. If a transport connection is interrupted, an authorized agent uses the dialog identifier to re-associate with the existing dialog instead of restarting the task. An intermediary uses the dialog identifier to correlate the requests it receives with the requests it forwards. Neither function requires access to task context.
-
-Dialog continuity is defined above any TCP connection, QUIC connection, or TLS association. QUIC Connection ID and TLS resumption provide connection-level continuity; they preserve transport and cryptographic state, not dialog context.
 
 # Applicability of Existing IETF Work {#existingworks}
 ## Reuse As-Is
