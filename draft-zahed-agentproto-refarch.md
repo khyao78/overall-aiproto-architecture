@@ -408,7 +408,7 @@ connection state. {{fig-lifecycle}} shows the lifecycle events.
 Agent interactions are often long-lived, interruption-prone, and delegated across multiple hops. Each dialog is required to have a dialog identifier that survives network interruption or change. If a transport connection is interrupted, an authorized agent uses the dialog identifier to re-associate with the existing dialog instead of restarting the task. An intermediary uses the dialog identifier to correlate the requests it receives with the requests it forwards. Neither function requires access to task context.
 
 Dialog continuity is defined above any trasport protocol connection (TCP connection, QUIC connection) or TLS association. QUIC Connection ID and TLS resumption provide connection-level continuity; they preserve transport and cryptographic state, not dialog context.
-   
+
 ## Authorization and Delegation
 
 Authorization and Delegation determines whether a participant is permitted to
