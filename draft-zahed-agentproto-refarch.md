@@ -543,7 +543,7 @@ Some agent interactions may use one-to-many or many-to-many communication among 
 # Applicability of Existing IETF Work {#existingworks}
 ## Reuse As-Is
 
-* TLS 1.3 {{!RFC8446}} provides mutual authentication and channel protection. Agents
+* TLS 1.3 {{!RFC9846}} provides mutual authentication and channel protection. Agents
   are required to negotiate TLS 1.3 or higher.
 * QUIC {{!RFC9000}} and QUIC-TLS {{!RFC9001}} provide multiplexed streams and 0-RTT
   session resumption.
@@ -572,7 +572,7 @@ Delegated authority is the primary risk. A rogue or compromised agent may attemp
 
 Valid credentials do not show that an agent runs on an uncompromised platform. Attestation, as discussed in {{framework}}, allows a peer to assess the integrity of the agent's execution environment.
 
-QUIC and TLS 1.3 0-RTT data can be replayed by an attacker (Section 8 of {{RFC8446}}). Messages that trigger non-idempotent actions are not permitted in 0-RTT data.
+QUIC and TLS 1.3 0-RTT data can be replayed by an attacker (Section 8 of {{RFC9846}}). Messages that trigger non-idempotent actions are not permitted in 0-RTT data.
 
 # Privacy Considerations {#privacy}
 
