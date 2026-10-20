@@ -326,6 +326,20 @@ Attestation, as defined in the SEAT WG, leverages the work of the RATS WG, inclu
 TODO: This text will be revised to point to the relevant
 specifications in the DAWN WG.
 
+# Agent Communication Protocol
+
+## Dialog propatation
+
+   TDB
+   
+## Authorization and Delegation
+
+   TDB
+
+## Identity Management
+
+  TBD
+
 # Security Aspects {#security}
 
 Security for agent communication spans four interdependent concerns: verifiable agent identity, channel protection, binding of authorized intent to agent execution, and delegation chain integrity. The use cases and protocol requirements that motivate this architecture are discussed in {{I-D.agentic-ai-usecases-requirements}}. Some of the mechanisms for satisfying these requirements using existing IETF standards are described in {{I-D.ietf-wimse-aims}}.
