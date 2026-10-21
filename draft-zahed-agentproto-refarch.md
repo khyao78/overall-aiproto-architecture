@@ -240,36 +240,6 @@ The architecture assumes that AI agents and tools can be discovered.
 Discovery is expected to be addressed by the DAWN WG and is outside the
 scope of this document.
 
-## Operational Flow {#opflow}
-
-The use case for orchestrator and agent collaboration is
-described in Section 4.2 of {{I-D.agentic-ai-usecases-requirements}}. A
-complete interaction in this use case proceeds as follows:
-
-1. Task Initiation: A user submits a task to an Orchestrator Agent.
-
-2. Agent Selection: The Orchestrator Agent discovers AI agents with the
-   capabilities required for the sub-tasks.
-
-3. Authentication: The Orchestrator Agent and each selected AI agent
-   authenticate each other.
-
-4. Authorization: The Orchestrator Agent obtains authorization for each
-   sub-task. The authorization is derived from the user's authorization
-   and limited to the sub-task.
-
-5. Dialog Establishment: The Orchestrator Agent establishes a dialog with
-   each selected AI agent over a protected transport connection.
-
-6. Task Execution: The AI agents exchange messages within the dialog. The
-   messages can carry multiple modalities.
-
-7. Dialog Propagation: If a transport connection is interrupted, the dialog
-   continues over a new transport connection.
-
-8. Task Completion: The Orchestrator Agent returns the result to the user
-   and terminates the dialogs.
-
 ## Architecture Overview {#architecture}
 
 {{fig-arch}} shows the architecture. The Agent Communication
