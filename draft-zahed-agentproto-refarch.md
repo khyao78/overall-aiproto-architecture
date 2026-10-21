@@ -141,7 +141,7 @@ Dialog Context Identifier:
   
 Intermediary:
 : An entity that relays or processes messages between dialog participants.
-  
+
 Message:
 : A discrete unit of communication exchanged between dialog participants.
 
@@ -231,7 +231,7 @@ The architecture consists of the following blocks:
   It has three sub-blocks: Dialog Propagation, Authorization and
   Delegation, and Identity Management. The sub-blocks carry and associate
   identity, delegation, and authorization information with a dialog.
-  
+
 The agent communication protocol does not authenticate participants, issue
 or validate credentials, or evaluate authorization policy. Those functions
 are performed by the mechanisms of the Security block, described in
