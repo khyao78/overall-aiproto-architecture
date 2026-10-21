@@ -95,8 +95,10 @@ maintains dialog context and continuity, and the existing protocol building
 blocks it reuses for identity, authentication, authorization, encryption,
 and transport. It describes the relationships between these blocks. The use
 cases and requirements that drive this architecture are described in
-{{I-D.agentic-ai-usecases-requirements}}. The mechanisms of the agent
-communication protocol are outside the scope of this document.
+{{I-D.agentic-ai-usecases-requirements}}. The wire formats and protocol
+elements of the agent communication protocol are outside the scope of
+this document, while this document describes the the functional
+decomposition of the reference architecture.
 
 MCP {{MCP}} and A2A {{A2A}} are application-layer protocols
 maintained by the Linux Foundation. They use IETF protocols such as HTTP,
@@ -123,40 +125,29 @@ AI Agent:
 Delegation:
 : The act of an AI agent requesting another AI agent to execute a task on
   its behalf.
-
+  
 Dialog:
 : The correlated sequence of interactions between two or more participants
-  (users, agents, and tools) over the course of a task. A dialog may persist
+  (users, agents, and tools) over the course of a task. A dialog is
+  identified by a dialog context identifier, has a lifecycle, and may persist
   across multiple individual message exchanges and network connections.
-
+  
 Dialog Context:
-: Context is a transferable structured, self-contained, task-specific and authority-scoped set of information, state, decisions, constraints, and pending or delegated tasks another agent     needs to continue or contribute to a task without reconstructing the previous agent’s full execution history. It requires identifiers and lifecycle state needed to correlate and maintain   a dialog. It does not include the content exchanged with AI models, such as conversation memory, retrieved documents, or prompts.
+: Context is a transferable structured, self-contained, task-specific and authority-scoped set of information, state, decisions, constraints, and pending or delegated tasks another agent needs to continue or contribute to a task without reconstructing the previous agents full execution history. It requires identifiers and lifecycle state needed to correlate and maintain a dialog. It does not include the content exchanged with AI models, such as conversation memory, retrieved documents, or prompts.
 
 Dialog Context Identifier:
 : An identifier, carried in the dialog context, that correlates messages
   with a dialog and survives network interruption or change.
-
-Context State:
-: The dialog context identifier, the dialog context, and the lifecycle state of a
-dialog context. It is distinct from task state.
-
+  
 Intermediary:
 : An entity that relays or processes messages between dialog participants.
-
-Lifecycle Event:
-: A change to the state of a dialog, such as its establishment,
-  modification, or termination.
-
+  
 Message:
 : A discrete unit of communication exchanged between dialog participants.
 
 Modality:
 : A category of data exchanged in a dialog, such as text, audio, image,
   or video.
-
-Orchestrator Agent:
-: An AI agent that decomposes a task into sub-tasks and delegates them to
-  other AI agents.
 
 Principal:
 : The user or organization whose authority is originally exercised when an
@@ -187,7 +178,7 @@ each described in a separate section:
 
 - Identity, authentication, authorization, and encryption ({{security}})
 - Transport ({{transport}})
-- Dialog Propagation ({{dialog}})
+- Agent Communication Protocol ({{dialog}})
 
 The following are outside the scope of this document:
 
@@ -229,12 +220,16 @@ Incremental deployment:
 
 # Architecture Composition {#composition}
 
-The architecture consists of the following functional blocks:
+The architecture consists of the following blocks and their sub-blocks:
 
-- Security: provides identity, authentication, authorization, and
-  encryption.
+- Security: provides encryption.
 - Transport: carries messages between dialog participants.
-- Agent communication protocol: maintains dialog context and continuity.
+- Agent communication protocol: maintains dialog context and continuity, provides identity, authentication, authorization.
+
+Note that the existing mechanism identity authorization and authentication are described
+part of the security block, however, they are grouped as a sub-blocks of the agent
+protocol block as they are tightly coupled with agent communication protocol. These
+sub-blocks only carry and associate those information with a dialog.
 
 The architecture assumes that AI agents and tools can be discovered.
 Discovery is expected to be addressed by the DAWN WG and is outside the
@@ -249,7 +244,8 @@ by the Security layer.
 
 ~~~
 +-------------+                       +-------------+
-| User / App  |                       | User / App  |
+| User /      |                       | User /      |
+| Principal   |                       | Principal   |
 +------+------+                       +------+------+
        |                                     |
        v                                     v
@@ -268,10 +264,10 @@ by the Security layer.
 | | Propagation      | | and Delegation   | | Management       | |
 | |                  | |                  | |                  | |
 | | - Identifier     | | - Delegation     | | - Roles          | |
-| | - Lifecycle      | |   context        | | - Participant    | |
-| | - Propagation    | | - Authorization  | |   identity       | |
-| | - Recovery       | |   context        | | - Credential     | |
-| |                  | | - Decision point | |   binding        | |
+| | - Lifecycle      | | - Authorization  | | - Participant    | |
+| | - Propagation    | | - Decision point | |   identity       | |
+| | - Recovery       | |                  | | - Credential     | |
+| |                  | |                  | |   binding        | |
 | +--------+---------+ +---------+--------+ +---------+--------+ |
 |          |                     |                    |          |
 |          +---------------------+--------------------+          |
@@ -279,21 +275,21 @@ by the Security layer.
 +----------------------------------------------------------------+
                                  |
                                  v
-+---------------------------------------------------------------+
-|                          Transport                            |
-|  - Multiplexed Streams                                        |
-|  - Per-stream Semantics                                       |
-|  - Connection continuity (Connection ID, TLS resumption)      |
-|  - Protocols: HTTP, QUIC, WebTransport, WebRTC, MoQT          |
-+---------------------------------------------------------------+
++----------------------------------------------------------------+
+|                          Transport                             |
+|  - Multiplexed Streams                                         |
+|  - Per-stream Semantics                                        |
+|  - Connection continuity (Connection ID, TLS resumption)       |
+|  - Protocols: HTTP, QUIC, WebTransport, WebRTC, MoQT           |
++----------------------------------------------------------------+
                                  |
                                  v
-+---------------------------------------------------------------+
-|                       Security                                |
-|  - Channel Protection                                         |
-|  - Mutual Authentication                                      |
-|  - Protocol: TLS 1.3                                          |
-+---------------------------------------------------------------+
++----------------------------------------------------------------+
+|                       Security                                 |
+|  - Channel Protection                                          |
+|  - Mutual Authentication                                       |
+|  - Protocol: TLS 1.3                                           |
++----------------------------------------------------------------+
 ~~~
 {: #fig-arch title="Reference architecture"}
 
@@ -301,14 +297,9 @@ TLS 1.3 provides channel protection and mutual authentication for all agent comm
 
 QUIC provides multiplexed streams with per-stream semantics suitable for the heterogeneous communication patterns of agent interactions. MoQT (Media over QUIC Transport) adds a publish/subscribe layer over QUIC for the one-to-many and many-to-many group communication that point-to-point QUIC streams cannot provide.
 
-OAuth 2.0 provides the authorization and delegation framework, enabling agents to obtain and present access tokens scoped to specific tasks. WIMSE provides workload identity for agents through a URI embedded in X.509 certificates at the TLS layer, and through Workload Identity Tokens (WIT) and WIMSE Proof Tokens (WPT) at the application layer. The Agent Communication Protocol maintains dialog continuity across connection changes using a stable dialog identifier. Connection-level continuity is provided by QUIC Connection ID and TLS resumption. Agents interact at the top of the stack, each acting on behalf of a user or system.
+OAuth 2.0 provides the authorization and delegation framework, enabling agents to obtain and present access tokens scoped to specific tasks. WIMSE provides workload identity for agents through a URI embedded in X.509 certificates at the TLS layer, and through Workload Identity Tokens (WIT) and WIMSE Proof Tokens (WPT) at the application layer. The Agent Communication Protocol maintains dialog continuity across connection changes using a stable dialog context identifier. Connection-level continuity is provided by QUIC Connection ID and TLS resumption. Agents interact at the top of the stack, each acting on behalf of a user or system.
 
 Attestation, as defined in the SEAT WG, leverages the work of the RATS WG, including the RATS architecture {{RFC9334}} and Evidence formats such as the Entity Attestation Token (EAT) {{RFC9711}}, and binds attestation evidence to TLS. The evidence can be conveyed during the TLS handshake or at the application layer by extending {{RFC9261}}. Attestation is not shown as a discrete layer in {{fig-arch}} because its position in the stack is solution-specific. It is outside the scope of this document.
-
-# Discovery Aspects {#discovery}
-
-TODO: This text will be revised to point to the relevant
-specifications in the DAWN WG.
 
 # Agent Communication Protocol
 
@@ -324,10 +315,10 @@ It does not define the semantics of identity, authorization, or application
 tasks. Those semantics are provided by the existing building blocks
 described in {{security}} and {{existingworks}}.
 
-## Dialog propatation {#dialog}
+## Dialog propagation {#dialog}
 
 The Dialog propagation is the controlled transfer and transformation of dialog
-context across agents that exists potentially in different trust domains, and time.
+context across agents that potentially exists in different trust domains, and time.
 Dialog Propagation maintains the dialog context and carries it between
 dialog participants, including across intermediaries. It is the sub-block
 that allows a dialog context to remain recognizable over multiple hops, over time,
@@ -335,10 +326,10 @@ and across transport connections.
 
 A propagated dialog context returns result(s) that the principal can verify when required.
 
-### Dialog Identifier and Correlation {#dialog-id}
+### Dialog Context Identifier and Correlation {#dialog-id}
 
 Every dialog context is required to have a context identifier, as described in
-{{dialogcont}}. The dialog identifier is required to:
+{{dialogcont}}. The dialog context identifier is required to:
 
 - correlate all messages that belong to the dialog, in every direction and at
   every hop;
@@ -352,34 +343,11 @@ A dialog can involve more than two participants, such as delegated agents,
 intermediaries, or members of a group. The dialog context identifier is therefore not
 required to imply a client-server relationship between participants.
 
-### Context Lifecycle {#context-lifecycle}
-
-The dialog context has an explicit lifecycle that is independent of transport
-connection state. {{fig-lifecycle}} shows the lifecycle events.
-
-~~~
-    CREATE
-      |
-      v
-   ACTIVE <------- MODIFY
-      |
-      v
-  SUSPENDED --- RESUME --> (authorization check) --> ACTIVE
-      |
-      v
-    RETIRE
-~~~
-{: #fig-lifecycle title="Dialog context lifecycle events"}
-
-### Context Propagation Across Intermediaries {#dialog-propagation-intermediaries}
-
-  TBD
-
 ### Dialog Continuity {#dialogcont}
 
-Agent interactions are often long-lived, interruption-prone, and delegated across multiple hops. Each dialog is required to have a dialog identifier that survives network interruption or change. If a transport connection is interrupted, an authorized agent uses the dialog identifier to re-associate with the existing dialog instead of restarting the task. An intermediary uses the dialog identifier to correlate the requests it receives with the requests it forwards. Neither function requires access to task context.
+Agent interactions are often long-lived, interruption-prone, and delegated across multiple hops. Each dialog is required to have a dialog context identifier that survives network interruption or change. If a transport connection is interrupted, an authorized agent uses the dialog context identifier to re-associate with the existing dialog instead of restarting the task. An intermediary uses the dialog context identifier to correlate the requests it receives with the requests it forwards. Neither function requires access to task context.
 
-Dialog continuity is defined above any trasport protocol connection (TCP connection, QUIC connection) or TLS association. QUIC Connection ID and TLS resumption provide connection-level continuity; they preserve transport and cryptographic state, not dialog context.
+Dialog continuity is defined above any transport protocol connection (TCP connection, QUIC connection) or TLS association. QUIC Connection ID and TLS resumption provide connection-level continuity; they preserve transport and cryptographic state, not dialog context.
 
 ## Authorization and Delegation
 
@@ -392,7 +360,7 @@ matter.
 
 ### Delegation {#delegation}
 
-Delegation is a relationship between participants, not a property of a
+Delegation is an act between participants, not a property of a
 transport connection. The architecture distinguishes three roles:
 
 - the principal, such as a user or an organization, whose authority is
@@ -401,10 +369,11 @@ transport connection. The architecture distinguishes three roles:
 - the delegated agent, which executes the task.
 
 In multi-hop delegation, an agent can be the delegated agent for one hop and
-the delegating agent for the next or even become the principal. The delegation context associates these
-roles with the dialog so that each participant can determine who it is acting
-for and who is acting for it. A delegation relationship can be revoked or
-terminated independently of the dialog in which it was used.
+the delegating agent for the next. A delegating agent can re-delegate authurity
+derived from the original principal. The delegation context associates these
+roles with the dialog so that each participant can determine who it is
+acting for and who is acting for it. A delegation relationship can be
+revoked or terminated independently of the dialog in which it was used.
 
 The constraints in {{intent-execution}} and {{delegation-chain}} apply: the
 authority passed at each hop is limited to the delegated task and is not
@@ -505,7 +474,7 @@ The transport is required to carry more than final results. It is required to al
 
 ## Cancellation and Interruption {#cancellation}
 
-Agent execution may be interrupted by user action, policy enforcement, higher-priority work, loss of authorization, or dependent-subtask failure. The protocol is required to define explicit application-layer cancellation and interruption signaling, rather than rely on connection teardown. Cancellation is required to identify the affected scope, including a single invocation, delegated subtree, or dialog. Receiving agents are required to treat cancellation as idempotent and report whether execution stopped, had already completed, or could not be fully rolled back due to an irreversible action. In multi-hop deployments, interruption semantics are required to propagate predictably so that dependent subtasks do not continue after withdrawal of the parent task.
+Agent execution may be interrupted by user action, policy enforcement, higher-priority work, loss of authorization, or dependent-subtask failure. The protocol is required to define explicit application-layer cancellation and interruption signaling, rather than rely on connection teardown at transport protocol layer. Cancellation is required to identify the affected scope, including a single invocation, delegated subtree, or dialog. Receiving agents are required to treat cancellation as idempotent and report whether execution stopped, had already completed, or could not be fully rolled back due to an irreversible action. In multi-hop deployments, interruption semantics are required to propagate predictably so that dependent subtasks do not continue after withdrawal of the parent task.
 
 ## Multiple Communication topologies {#topologies}
 
@@ -533,7 +502,7 @@ The following existing protocols may require profiling or extension; this list i
 
 ## New Protocol Work
 
-The Agent Communication Protocol shown in {{fig-arch}} is new protocol work.
+The Dialog Propagation Protocol shown in {{fig-arch}} is new protocol work.
 It is expected to be specified separately.
 
 # Security Considerations {#secconsiderations}
@@ -548,12 +517,12 @@ QUIC and TLS 1.3 0-RTT data can be replayed by an attacker (Section 8 of {{RFC98
 
 # Privacy Considerations {#privacy}
 
-Dialog identifiers and dialog context persist across intermediaries and
+Dialog context identifiers and dialog context persist across intermediaries and
 trust boundaries. An intermediary or other observer can use them to link
 interactions that would otherwise be separate and to track agent and user
 activity over time. The Agent Communication Protocol is expected to analyze
 these risks and specify mitigations, such as limiting the scope and
-lifetime of dialog identifiers.
+lifetime of dialog context identifiers.
 
 Agent identity information is sensitive, particularly in multi-domain
 deployments. Persistent agent identifiers used across dialogs and domains
