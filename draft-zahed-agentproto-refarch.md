@@ -131,14 +131,14 @@ Dialog:
   (users, agents, and tools) over the course of a task. A dialog is
   identified by a dialog context identifier, has a lifecycle, and may persist
   across multiple individual message exchanges and network connections.
-  
+ 
 Dialog Context:
 : Context is a transferable structured, self-contained, task-specific and authority-scoped set of information, state, decisions, constraints, and pending or delegated tasks another agent needs to continue or contribute to a task without reconstructing the previous agents full execution history. It requires identifiers and lifecycle state needed to correlate and maintain a dialog. It does not include the content exchanged with AI models, such as conversation memory, retrieved documents, or prompts.
 
 Dialog Context Identifier:
 : An identifier, carried in the dialog context, that correlates messages
   with a dialog and survives network interruption or change.
-  
+
 Intermediary:
 : An entity that relays or processes messages between dialog participants.
 
