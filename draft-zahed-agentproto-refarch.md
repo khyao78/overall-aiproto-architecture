@@ -176,9 +176,11 @@ This architecture addresses the requirements in
 {{I-D.agentic-ai-usecases-requirements}}. It covers the following areas,
 each described in a separate section:
 
-- Identity, authentication, authorization, and encryption ({{security}})
+- Encryption, channel protection, authentication, authorization, and
+  identity credentials ({{security}})
 - Transport ({{transport}})
-- Agent Communication Protocol ({{dialog}})
+- Agent Communication Protocol, including the association of identity,
+  delegation, and authorization information with a dialog ({{acp}})
 
 The following are outside the scope of this document:
 
@@ -220,16 +222,23 @@ Incremental deployment:
 
 # Architecture Composition {#composition}
 
-The architecture consists of the following blocks and their sub-blocks:
+The architecture consists of the following blocks:
 
-- Security: provides encryption.
+- Security: provides the existing mechanisms for encryption, channel
+  protection, authentication, authorization, and identity credentials.
 - Transport: carries messages between dialog participants.
-- Agent communication protocol: maintains dialog context and continuity, provides identity, authentication, authorization.
-
-Note that the existing mechanism identity authorization and authentication are described
-part of the security block, however, they are grouped as a sub-blocks of the agent
-protocol block as they are tightly coupled with agent communication protocol. These
-sub-blocks only carry and associate those information with a dialog.
+- Agent communication protocol: maintains dialog context and continuity.
+  It has three sub-blocks: Dialog Propagation, Authorization and
+  Delegation, and Identity Management. The sub-blocks carry and associate
+  identity, delegation, and authorization information with a dialog.
+  
+The agent communication protocol does not authenticate participants, issue
+or validate credentials, or evaluate authorization policy. Those functions
+are performed by the mechanisms of the Security block, described in
+{{security}} and {{existingworks}}. The Authorization and Delegation and
+Identity Management sub-blocks are part of the agent communication protocol
+because the information they carry has to stay associated with the dialog
+across intermediaries, hops, and connection changes.
 
 The architecture assumes that AI agents and tools can be discovered.
 Discovery is expected to be addressed by the DAWN WG and is outside the
@@ -267,7 +276,7 @@ by the Security layer.
 | | - Lifecycle      | | - Authorization  | | - Participant    | |
 | | - Propagation    | | - Decision point | |   identity       | |
 | | - Recovery       | |                  | | - Credential     | |
-| |                  | |                  | |   binding        | |
+| |                  | |                  | |   reference      | |
 | +--------+---------+ +---------+--------+ +---------+--------+ |
 |          |                     |                    |          |
 |          +---------------------+--------------------+          |
@@ -288,7 +297,7 @@ by the Security layer.
 |                       Security                                 |
 |  - Channel Protection                                          |
 |  - Mutual Authentication                                       |
-|  - Protocol: TLS 1.3                                           |
+|  - Protocol: TLS 1.3, WIT/WPT                                  |
 +----------------------------------------------------------------+
 ~~~
 {: #fig-arch title="Reference architecture"}
@@ -301,7 +310,7 @@ OAuth 2.0 provides the authorization and delegation framework, enabling agents t
 
 Attestation, as defined in the SEAT WG, leverages the work of the RATS WG, including the RATS architecture {{RFC9334}} and Evidence formats such as the Entity Attestation Token (EAT) {{RFC9711}}, and binds attestation evidence to TLS. The evidence can be conveyed during the TLS handshake or at the application layer by extending {{RFC9261}}. Attestation is not shown as a discrete layer in {{fig-arch}} because its position in the stack is solution-specific. It is outside the scope of this document.
 
-# Agent Communication Protocol
+# Agent Communication Protocol {#acp}
 
 The Agent Communication Protocol provides the mechanisms that keep an
 interaction between users, agents, and tools coherent across network
