@@ -372,8 +372,8 @@ In multi-hop delegation, an agent can be the delegated agent for one hop and
 the delegating agent for the next. A delegating agent can re-delegate authurity
 derived from the original principal. The delegation context associates these
 roles with the dialog so that each participant can determine who it is
-acting for and who is acting for it. A delegation relationship can be
-revoked or terminated independently of the dialog in which it was used.
+acting for and who is acting for it. A delegation can be revoked or terminated
+independently of the dialog in which it was used.
 
 The constraints in {{intent-execution}} and {{delegation-chain}} apply: the
 authority passed at each hop is limited to the delegated task and is not
@@ -422,7 +422,7 @@ Authentication may operate at the transport layer, the application layer, or bot
 
 ## Intent-Execution Separation {#intent-execution}
 
-AI agents dynamically generate execution plans and issue sub-requests based on their own reasoning, which may diverge from the scope of the original user authorization. This architecture requires that authorization granted to an agent be limited to the scope of the delegated task, so that an agent cannot use it to authorize actions outside that scope. This depends on delegation mechanics in which an agent acts on behalf of the original user and the authority passed at each hop is narrowed to the delegated task rather than broadened. Standardizing these delegation mechanics for AI agents is an active area of work in the OAuth WG. This document will reference the relevant outcomes as this work matures.
+AI agents dynamically generate execution plans and issue sub-requests based on their own reasoning, which may diverge from the scope of the original user authorization. This architecture requires that authorization granted to an agent be limited to the scope of the delegated task, so that an agent cannot use it to authorize actions outside that scope. This depends on delegation mechanics in which an agent acts on behalf of the original user or principal and the authority passed at each hop is narrowed to the delegated task rather than broadened. Standardizing these delegation mechanics for AI agents is an active area of work in the OAuth WG. This document will reference the relevant outcomes as this work matures.
 
 ## Delegation Chain Integrity {#delegation-chain}
 
@@ -430,7 +430,7 @@ When one agent delegates a sub-task to another, the receiving agent is authorize
 
 ## Audit and Non-Repudiation {#audit}
 
-Agents act on behalf of users or other agents across multiple hops and
+Agents act on behalf of users/principals or other agents across multiple hops and
 administrative domains. Audit requires that each action be traceable to the
 principal that authorized it and the agent that executed it. For Non-repudiation,
 this traceability is required to be cryptographically verifiable, so that
@@ -474,7 +474,7 @@ The transport is required to carry more than final results. It is required to al
 
 ## Cancellation and Interruption {#cancellation}
 
-Agent execution may be interrupted by user action, policy enforcement, higher-priority work, loss of authorization, or dependent-subtask failure. The protocol is required to define explicit application-layer cancellation and interruption signaling, rather than rely on connection teardown at transport protocol layer. Cancellation is required to identify the affected scope, including a single invocation, delegated subtree, or dialog. Receiving agents are required to treat cancellation as idempotent and report whether execution stopped, had already completed, or could not be fully rolled back due to an irreversible action. In multi-hop deployments, interruption semantics are required to propagate predictably so that dependent subtasks do not continue after withdrawal of the parent task.
+Agent execution may be interrupted by user/principal action, policy enforcement, higher-priority work, loss of authorization, or dependent-subtask failure. The protocol is required to define explicit application-layer cancellation and interruption signaling, rather than rely on connection teardown at transport protocol layer. Cancellation is required to identify the affected scope, including a single invocation, delegated subtree, or dialog. Receiving agents are required to treat cancellation as idempotent and report whether execution stopped, had already completed, or could not be fully rolled back due to an irreversible action. In multi-hop deployments, interruption semantics are required to propagate predictably so that dependent subtasks do not continue after withdrawal of the parent task.
 
 ## Multiple Communication topologies {#topologies}
 
@@ -520,7 +520,7 @@ QUIC and TLS 1.3 0-RTT data can be replayed by an attacker (Section 8 of {{RFC98
 
 Dialog context identifiers and dialog context persist across intermediaries and
 trust boundaries. An intermediary or other observer can use them to link
-interactions that would otherwise be separate and to track agent and user
+interactions that would otherwise be separate and to track agent and user/principal's
 activity over time. The Agent Communication Protocol is expected to analyze
 these risks and specify mitigations, such as limiting the scope and
 lifetime of dialog context identifiers.
