@@ -1,13 +1,13 @@
 <!-- regenerate: on (set to off if you edit this file) -->
 
-# AI Agent Interoperable Protocol Framework (AIPF)
+# AI Agent Protocol Reference Architecture
 
-This is the working area for the individual Internet-Draft, "AI Agent Interoperable Protocol Framework (AIPF)".
+This is the working area for the individual Internet-Draft, "Reference Architecture for Agent Communication".
 
-* [Editor's Copy](https://zaheduzzaman.github.io/overall-aiproto-architecture/#go.draft-zahed-agent-com-framework.html)
-* [Datatracker Page](https://datatracker.ietf.org/doc/draft-zahed-agent-com-framework)
-* [Individual Draft](https://datatracker.ietf.org/doc/html/draft-zahed-agent-com-framework)
-* [Compare Editor's Copy to Individual Draft](https://zaheduzzaman.github.io/overall-aiproto-architecture/#go.draft-zahed-agent-com-framework.diff)
+* [Editor's Copy](https://zaheduzzaman.github.io/overall-aiproto-architecture/#go.draft-zahed-agentproto-refarch.html)
+* [Datatracker Page]()
+* [Individual Draft]()
+* [Compare Editor's Copy to Individual Draft]()
 
 
 ## Contributing
