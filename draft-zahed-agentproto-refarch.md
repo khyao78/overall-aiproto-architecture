@@ -270,7 +270,7 @@ complete interaction in this use case proceeds as follows:
 8. Task Completion: The Orchestrator Agent returns the result to the user
    and terminates the dialogs.
 
-## Architecture Overview {#framework}
+## Architecture Overview {#architecture}
 
 {{fig-arch}} shows the architecture. The Agent Communication
 Protocol uses the Dialog Propagation, Authorization and Delegation, and Identity
@@ -572,7 +572,7 @@ AI agents enlarge the attack surface: they act autonomously, delegate across adm
 
 Delegated authority is the primary risk. A rogue or compromised agent may attempt to use delegated authority beyond the task it was granted, or to broaden it as it delegates onward. As required in {{intent-execution}} and {{delegation-chain}}, authority granted to an agent is scoped to the delegated task and cannot be broadened along the chain, and the delegation chain is verifiable at each hop so an intermediary cannot forge or escalate it.
 
-Valid credentials do not show that an agent runs on an uncompromised platform. Attestation, as discussed in {{framework}}, allows a peer to assess the integrity of the agent's execution environment.
+Valid credentials do not show that an agent runs on an uncompromised platform. Attestation, as discussed in {{architecture}}, allows a peer to assess the integrity of the agent's execution environment.
 
 QUIC and TLS 1.3 0-RTT data can be replayed by an attacker (Section 8 of {{RFC9846}}). Messages that trigger non-idempotent actions are not permitted in 0-RTT data.
 
