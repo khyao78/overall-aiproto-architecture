@@ -125,7 +125,7 @@ AI Agent:
 Delegation:
 : The act of an AI agent requesting another AI agent to execute a task on
   its behalf.
-  
+
 Dialog:
 : The correlated sequence of interactions between two or more participants
   (users, agents, and tools) over the course of a task. A dialog is
