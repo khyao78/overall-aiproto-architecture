@@ -248,7 +248,7 @@ scope of this document.
 
 {{fig-arch}} shows the architecture. The Agent Communication
 Protocol uses the Dialog Propagation, Authorization and Delegation, and Identity
-Management components. It runs over the Transport layer, which is protected
+Management sub-blocks. It runs over the Transport layer, which is protected
 by the Security layer.
 
 ~~~
@@ -307,6 +307,8 @@ TLS 1.3 provides channel protection and mutual authentication for all agent comm
 QUIC provides multiplexed streams with per-stream semantics suitable for the heterogeneous communication patterns of agent interactions. MoQT (Media over QUIC Transport) adds a publish/subscribe layer over QUIC for the one-to-many and many-to-many group communication that point-to-point QUIC streams cannot provide.
 
 OAuth 2.0 provides the authorization and delegation framework, enabling agents to obtain and present access tokens scoped to specific tasks. WIMSE provides workload identity for agents through a URI embedded in X.509 certificates at the TLS layer, and through Workload Identity Tokens (WIT) and WIMSE Proof Tokens (WPT) at the application layer. The Agent Communication Protocol maintains dialog continuity across connection changes using a stable dialog context identifier. Connection-level continuity is provided by QUIC Connection ID and TLS resumption. Agents interact at the top of the stack, each acting on behalf of a user or system.
+
+The Agent Communication Protocol carries and associates the resulting tokens and identities with the dialog. It does not issue or validate them. The Security box in {{fig-arch}} groups the reused mechanisms. The transport-layer mechanisms protect the transport connection. The application-layer mechanisms are used by the Authorization and Delegation and Identity Management sub-blocks, and they remain in effect where an intermediary terminates the transport connection. They are drawn below the Transport layer for simplicity, not because they operate there.
 
 Attestation, as defined in the SEAT WG, leverages the work of the RATS WG, including the RATS architecture {{RFC9334}} and Evidence formats such as the Entity Attestation Token (EAT) {{RFC9711}}, and binds attestation evidence to TLS. The evidence can be conveyed during the TLS handshake or at the application layer by extending {{RFC9261}}. Attestation is not shown as a discrete layer in {{fig-arch}} because its position in the stack is solution-specific. It is outside the scope of this document.
 
