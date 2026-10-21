@@ -503,7 +503,8 @@ The following existing protocols may require profiling or extension; this list i
 ## New Protocol Work
 
 The Dialog Propagation Protocol shown in {{fig-arch}} is new protocol work.
-It is expected to be specified separately.
+It is expected to be specified separately. The new protocol work includes
+the dialog identifier, context and lifecycle, plus the rules for carrying and associating identity, delegation and authorization information. Everything else is reused.
 
 # Security Considerations {#secconsiderations}
 
